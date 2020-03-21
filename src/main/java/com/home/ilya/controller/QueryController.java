@@ -4,58 +4,40 @@ import com.home.ilya.domain.QueryInfo;
 import com.home.ilya.service.QueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.server.HandlerFunction;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.RouterFunctions;
-import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Mono;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.util.UUID;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.path;
-import static org.springframework.web.reactive.function.server.RouterFunctions.route;
-import static org.springframework.web.reactive.function.server.ServerResponse.created;
-import static org.springframework.web.reactive.function.server.ServerResponse.notFound;
-import static org.springframework.web.reactive.function.server.ServerResponse.ok;
+import static org.springframework.http.ResponseEntity.created;
 
 @Slf4j
-@Configuration
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/queries")
 public class QueryController {
 
     private final QueryService queryService;
 
-    @Bean
-    public RouterFunction<ServerResponse> routes() {
-        return RouterFunctions.nest(path("/queries"), route()
-                .GET("/{id}", getById())
-                .POST("", saveQuery())
-                .build()
-        );
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public QueryInfo getById(@PathVariable("id") UUID id) {
+        return queryService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    private HandlerFunction<ServerResponse> saveQuery() {
-        return request -> request.bodyToMono(QueryInfo.class)
-                .flatMap(queryService::saveQuery)
-                .flatMap(queryInfo -> created(URI.create("/queries/" + queryInfo.getId())).build());
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<QueryInfo> save(@RequestBody QueryInfo queryInfo) {
+        QueryInfo saved = queryService.save(queryInfo);
+        return created(URI.create("/queries/" + saved.getId())).build();
+
     }
 
-    private HandlerFunction<ServerResponse> getById() {
-        return request -> Mono.just(request.pathVariable("id"))
-                .flatMap(queryService::findById)
-                .flatMap(queryInfo -> {
-                    if (queryInfo.isPresent()) {
-                        return ok()
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .body(BodyInserters.fromValue(queryInfo.get()));
-                    } else {
-                        return notFound().build();
-                    }
-                });
-    }
 }
