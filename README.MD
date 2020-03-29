@@ -5,7 +5,7 @@ Check SQL query performance application.
 Performance metrics:
 1. Execution time
 
-##API
+## API
 
 Application:
 * GET /queries - get all
@@ -16,7 +16,7 @@ Third party:
 * Swagger - http://localhost:8080/swagger-ui.html#
 * RabbitMQ - http://localhost:15672/#
 
-##Components
+## Components
 
 Databases:
 1. PostgreSQL
@@ -25,8 +25,8 @@ Databases:
 Both databases test table scheme:
 
 
-##How to:
-###build
+## How to:
+### build
 
 Build gradle project
 ```
@@ -38,14 +38,14 @@ Run integration tests
 ./gradlew integrationTest
 ```
 
-###start
+### start
 
 Start application after build
 ```
 ./docker-compose up
 ```
 
-##Demo
+## Demo
 
 Steps:
 1. Go to swagger and create new query through post request on /queries. Query could perform performance test only according to test table scheme.
@@ -75,7 +75,7 @@ Steps:
 }
 ```
 
-##To improve:
+## To improve:
 1. Corner cases handling
 2. Exception handling
 3. Query validation
