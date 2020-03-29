@@ -16,14 +16,13 @@ Third party:
 * Swagger - http://localhost:8080/swagger-ui.html#
 * RabbitMQ - http://localhost:15672/#
 
-## Components
+## Component
 
 Databases:
 1. PostgreSQL
 2. MSSQL
 
 Both databases test table scheme:
-
 
 ## How to:
 ### build
@@ -76,6 +75,7 @@ Steps:
 ```
 
 ## To improve:
+
 1. Corner cases handling
 2. Exception handling
 3. Query validation
