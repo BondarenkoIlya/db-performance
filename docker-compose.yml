@@ -1,0 +1,50 @@
+version: '3.5'
+
+services:
+  db-performance:
+    container_name: db-performance
+    build: .
+    image: db-performance
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database-mssql
+      - database-postgresql
+      - rabbitmq
+
+  database-mssql:
+    container_name: database-mssql
+    build: ./docker/database-mssql
+    restart: always
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: passworD1
+      ACCEPT_EULA: Y
+      MSSQL_DB: dbp
+      MSSQL_USER: dbp
+      MSSQL_PASSWORD: passworD1
+
+  database-postgresql:
+    image: postgres:12
+    container_name: database-postgresql
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/database-postgresql/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+    environment:
+      POSTGRES_USER: dbp
+      POSTGRES_PASSWORD: passworD1
+      POSTGRES_DB: dbp
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq
+      RABBITMQ_DEFAULT_PASS: rabbitmq
+

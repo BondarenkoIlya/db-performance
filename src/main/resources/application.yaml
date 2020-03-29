@@ -1,0 +1,7 @@
+logging.level.org.springframework: DEBUG
+
+spring:
+  rabbitmq:
+#    host: localhost
+    username: rabbitmq
+    password: rabbitmq
