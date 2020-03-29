@@ -24,10 +24,4 @@ public class WebConfig {
         return objectMapper;
     }
 
-    @Bean
-    public List<String> databases() {
-        return List.of("postgresql", "mssql");
-    }
-
-
 }

@@ -1,34 +1,33 @@
 package com.home.ilya.config;
 
-import com.home.ilya.service.MssqlReceiver;
-import com.home.ilya.service.PerformanceService;
-import com.home.ilya.service.PostgresReceiver;
 import com.home.ilya.service.RabbitSender;
 import org.springframework.amqp.core.Queue;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 public class RabbitConfig {
+
     @Bean
-    public Queue postgresqlQueue() {
-        return new Queue("postgresql");
+    public List<Queue> queues(ApplicationContext applicationContext, List<String> databases) {
+        ConfigurableListableBeanFactory beanFactory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
+        return databases.stream()
+                .map(database -> {
+                    Queue queue = new Queue(database);
+                    beanFactory.registerSingleton(database + "Queue", queue);
+                    return queue;
+                })
+                .collect(Collectors.toList());
     }
 
     @Bean
-    public Queue mssqlQueue() {
-        return new Queue("mssql");
-    }
-
-    @Bean
-    public List<Queue> databaseQueues() {
-        return List.of(postgresqlQueue(), mssqlQueue());
-    }
-
-    @Bean
-    public RabbitSender sender() {
-        return new RabbitSender(databaseQueues());
+    public RabbitSender sender(List<Queue> queues) {
+        return new RabbitSender(queues);
     }
 }

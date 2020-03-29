@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.ResponseEntity.created;
@@ -38,6 +39,11 @@ public class QueryController {
         QueryInfo saved = queryService.save(queryInfo);
         return created(URI.create("/queries/" + saved.getId())).build();
 
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<QueryInfo> getAll() {
+        return queryService.findAll();
     }
 
 }

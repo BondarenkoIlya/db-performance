@@ -4,6 +4,7 @@ import com.home.ilya.dao.QueryDao;
 import com.home.ilya.domain.PerformanceResult;
 import com.home.ilya.domain.PerformanceTestStatus;
 import com.home.ilya.domain.QueryInfo;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,6 @@ public class QueryService {
     private final RabbitSender rabbitSender;
     private final QueryDao queryDao;
 
-
     public Optional<QueryInfo> findById(UUID id) {
         return queryDao.findById(id);
     }
@@ -36,5 +36,9 @@ public class QueryService {
         queryDao.save(queryInfo);
         rabbitSender.send(queryInfo);
         return queryInfo;
+    }
+
+    public List<QueryInfo> findAll() {
+        return queryDao.getAll();
     }
 }

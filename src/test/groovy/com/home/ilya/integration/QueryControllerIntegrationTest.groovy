@@ -1,4 +1,4 @@
-package com.home.ilya.controller
+package com.home.ilya.integration
 
 import com.home.ilya.Application
 import com.home.ilya.dao.QueryDao
@@ -53,8 +53,8 @@ class QueryControllerIntegrationTest extends Specification {
     }
 
     QueryInfo generateQueryInfo() {
-        def performanceResult1 = new PerformanceResult(databaseType: "PostgreSQL", performanceTestStatus: PerformanceTestStatus.FINISH, executionTime: 100)
-        def performanceResult2 = new PerformanceResult(databaseType: "Oracle", performanceTestStatus: PerformanceTestStatus.IN_PROGRESS)
+        def performanceResult1 = new PerformanceResult(databaseType: "postgresql", performanceTestStatus: PerformanceTestStatus.FINISH, executionTime: 100)
+        def performanceResult2 = new PerformanceResult(databaseType: "mssql", performanceTestStatus: PerformanceTestStatus.IN_PROGRESS)
         def queryInfo = new QueryInfo(query: "Select * from Test t;", id: UUID.randomUUID(), version: 1, perfResults: List.of(performanceResult1, performanceResult2))
         dao.map.put(queryInfo.id, queryInfo)
         return queryInfo
